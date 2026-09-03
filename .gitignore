@@ -1,27 +1,19 @@
-# Terraform
-.terraform/
+# Terraform working directories
+**/.terraform/*
+
+# Terraform state files
 *.tfstate
 *.tfstate.*
-*.tfvars
-*.tfvars.json
+
+# Terraform backup files
+*.backup
+terraform.tfvars
+# Terraform crash logs
 crash.log
 crash.*.log
-override.tf
-override.tf.json
-*_override.tf
-*_override.tf.json
-
-# AWS credentials
-.aws/
-credentials
 
 # macOS
 .DS_Store
 
-# IDE
-.idea/
-.vscode/
-
-# Environment / secrets
-.env
-.env.*
+# Installer packages
+*.pkg

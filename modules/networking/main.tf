@@ -2,7 +2,7 @@ resource "aws_vpc" "this" {
   cidr_block = var.vpc_cidr
 
   tags = {
-    Name        = "${var.environment}-vpc"
+    Name        = "sre-${var.environment}-vpc"
     Environment = var.environment
     ManagedBy   = "Terraform"
     Project     = "sre-aws-terraform-platform"
@@ -16,7 +16,7 @@ resource "aws_subnet" "public_a" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name        = "${var.environment}-public-a"
+    Name        = "sre-${var.environment}-public-a"
     Environment = var.environment
     ManagedBy   = "Terraform"
     Project     = "sre-aws-terraform-platform"
@@ -30,7 +30,7 @@ resource "aws_subnet" "public_b" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name        = "${var.environment}-public-b"
+    Name        = "sre-${var.environment}-public-b"
     Environment = var.environment
     ManagedBy   = "Terraform"
     Project     = "sre-aws-terraform-platform"
@@ -41,7 +41,7 @@ resource "aws_internet_gateway" "this" {
   vpc_id = aws_vpc.this.id
 
   tags = {
-    Name        = "${var.environment}-igw"
+    Name        = "sre-${var.environment}-igw"
     Environment = var.environment
     ManagedBy   = "Terraform"
     Project     = "sre-aws-terraform-platform"
@@ -57,7 +57,7 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name        = "${var.environment}-public-rt"
+    Name        = "sre-${var.environment}-public-rt"
     Environment = var.environment
     ManagedBy   = "Terraform"
     Project     = "sre-aws-terraform-platform"
@@ -80,7 +80,7 @@ resource "aws_subnet" "private_a" {
   availability_zone = var.availability_zones[0]
 
   tags = {
-    Name        = "${var.environment}-private-a"
+    Name        = "sre-${var.environment}-private-a"
     Environment = var.environment
     ManagedBy   = "Terraform"
     Project     = "sre-aws-terraform-platform"
@@ -93,7 +93,7 @@ resource "aws_subnet" "private_b" {
   availability_zone = var.availability_zones[1]
 
   tags = {
-    Name        = "${var.environment}-private-b"
+    Name        = "sre-${var.environment}-private-b"
     Environment = var.environment
     ManagedBy   = "Terraform"
     Project     = "sre-aws-terraform-platform"
@@ -104,7 +104,7 @@ resource "aws_eip" "nat" {
   domain = "vpc"
 
   tags = {
-    Name        = "${var.environment}-nat-eip"
+    Name        = "sre-${var.environment}-nat-eip"
     Environment = var.environment
     ManagedBy   = "Terraform"
     Project     = "sre-aws-terraform-platform"
@@ -120,7 +120,7 @@ resource "aws_nat_gateway" "this" {
   ]
 
   tags = {
-    Name        = "${var.environment}-nat"
+    Name        = "sre-${var.environment}-nat"
     Environment = var.environment
     ManagedBy   = "Terraform"
     Project     = "sre-aws-terraform-platform"
@@ -136,7 +136,7 @@ resource "aws_route_table" "private" {
   }
 
   tags = {
-    Name        = "${var.environment}-private-rt"
+    Name        = "sre-${var.environment}-private-rt"
     Environment = var.environment
     ManagedBy   = "Terraform"
     Project     = "sre-aws-terraform-platform"

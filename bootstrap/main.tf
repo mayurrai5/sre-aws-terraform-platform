@@ -99,9 +99,9 @@ resource "aws_iam_role" "github_actions" {
 
           StringLike = {
             "token.actions.githubusercontent.com:sub" = [
-              "repo:mayurrai5/sre-aws-terraform-platform:pull_request",
-              "repo:mayurrai5/sre-aws-terraform-platform:ref:refs/heads/main",
-              "repo:mayurrai5/sre-aws-terraform-platform:ref:refs/heads/ci/*"
+              "repo:mayurrai5@77747356/sre-aws-terraform-platform@1337022661:pull_request",
+              "repo:mayurrai5@77747356/sre-aws-terraform-platform@1337022661:ref:refs/heads/main",
+              "repo:mayurrai5@77747356/sre-aws-terraform-platform@1337022661:ref:refs/heads/ci/*"
             ]
           }
         }

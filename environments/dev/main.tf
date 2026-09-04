@@ -13,7 +13,6 @@ terraform {
     bucket       = "sre-aws-terraform-state-015747469534"
     key          = "dev/terraform.tfstate"
     region       = "ap-south-1"
-    profile      = "sre-lab"
     use_lockfile = true
   }
 }

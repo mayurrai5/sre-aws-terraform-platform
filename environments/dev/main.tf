@@ -19,8 +19,7 @@ terraform {
 }
 
 provider "aws" {
-  region  = var.aws_region
-  profile = "sre-lab"
+  region = var.aws_region
 }
 module "networking" {
   source = "../../modules/networking"

@@ -7,7 +7,12 @@ resource "aws_instance" "private" {
   associate_public_ip_address = false
 
   iam_instance_profile = var.iam_instance_profile
-
+  metadata_options {
+    http_tokens = "required"
+  }
+  root_block_device {
+    encrypted = true
+  }
   tags = {
     Name        = "sre-${var.environment}-private-ec2"
     Environment = var.environment

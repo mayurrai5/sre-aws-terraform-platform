@@ -46,7 +46,7 @@ module "compute" {
   security_group_id    = aws_security_group.private_ec2.id
   iam_instance_profile = module.iam.instance_profile_name
 }
-data "aws_caller_identity" "current" {}
+
 resource "aws_security_group" "private_ec2" {
   name        = "sre-dev-private-ec2"
   description = "Security group for private EC2"

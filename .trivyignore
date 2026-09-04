@@ -1,0 +1,7 @@
+# Intentional: private EC2 requires outbound internet access through NAT Gateway.
+# Inbound access remains restricted.
+AWS-0104
+
+# Intentional: designated public subnets may assign public IP addresses.
+# Private workloads are deployed separately in private subnets.
+AWS-0164

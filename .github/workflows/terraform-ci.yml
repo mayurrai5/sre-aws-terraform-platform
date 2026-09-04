@@ -30,6 +30,20 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.12.0"
+      - name: Debug OIDC claims
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const token = await core.getIDToken("sts.amazonaws.com")
+            const payload = JSON.parse(
+              Buffer.from(token.split(".")[1], "base64url").toString()
+            )
+
+            console.log("issuer:", payload.iss)
+            console.log("audience:", payload.aud)
+            console.log("subject:", payload.sub)
+            console.log("repository:", payload.repository)
+            console.log("ref:", payload.ref)
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4

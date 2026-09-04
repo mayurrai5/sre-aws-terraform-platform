@@ -17,6 +17,28 @@ provider "aws" {
 data "aws_caller_identity" "current" {}
 
 # --------------------------------------------------
+# KMS key for Terraform state encryption
+# --------------------------------------------------
+
+resource "aws_kms_key" "terraform_state" {
+  description             = "KMS key for Terraform state bucket encryption"
+  deletion_window_in_days = 7
+  enable_key_rotation     = true
+
+  tags = {
+    Name        = "sre-terraform-state-kms-key"
+    Environment = "bootstrap"
+    ManagedBy   = "Terraform"
+    Project     = "sre-aws-terraform-platform"
+  }
+}
+
+resource "aws_kms_alias" "terraform_state" {
+  name          = "alias/sre-terraform-state"
+  target_key_id = aws_kms_key.terraform_state.key_id
+}
+
+# --------------------------------------------------
 # Terraform state backend
 # --------------------------------------------------
 
@@ -44,7 +66,8 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "terraform_state" 
 
   rule {
     apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"
+      sse_algorithm     = "aws:kms"
+      kms_master_key_id = aws_kms_key.terraform_state.arn
     }
   }
 }
@@ -115,6 +138,7 @@ resource "aws_iam_role" "github_actions" {
     Project   = "sre-aws-terraform-platform"
   }
 }
+
 # --------------------------------------------------
 # GitHub Actions Terraform permissions
 # --------------------------------------------------
@@ -128,7 +152,7 @@ resource "aws_iam_role_policy" "github_actions_terraform" {
 
     Statement = [
 
-      # Terraform remote state access
+      # Terraform remote state bucket access
       {
         Sid    = "TerraformStateBucket"
         Effect = "Allow"
@@ -141,6 +165,7 @@ resource "aws_iam_role_policy" "github_actions_terraform" {
         Resource = aws_s3_bucket.terraform_state.arn
       },
 
+      # Terraform remote state object access
       {
         Sid    = "TerraformStateObjects"
         Effect = "Allow"
@@ -152,6 +177,21 @@ resource "aws_iam_role_policy" "github_actions_terraform" {
         ]
 
         Resource = "${aws_s3_bucket.terraform_state.arn}/*"
+      },
+
+      # KMS permissions for encrypted Terraform state
+      {
+        Sid    = "TerraformStateKMS"
+        Effect = "Allow"
+
+        Action = [
+          "kms:Decrypt",
+          "kms:Encrypt",
+          "kms:GenerateDataKey",
+          "kms:DescribeKey"
+        ]
+
+        Resource = aws_kms_key.terraform_state.arn
       },
 
       # Read-only AWS access required for terraform plan
@@ -184,4 +224,10 @@ output "github_actions_role_arn" {
   description = "IAM role ARN assumed by GitHub Actions through OIDC"
 
   value = aws_iam_role.github_actions.arn
+}
+
+output "terraform_state_kms_key_arn" {
+  description = "KMS key ARN used to encrypt the Terraform state bucket"
+
+  value = aws_kms_key.terraform_state.arn
 }

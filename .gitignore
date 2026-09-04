@@ -7,13 +7,19 @@
 
 # Terraform backup files
 *.backup
-terraform.tfvars
+
+# Local Terraform variable overrides
+*.auto.tfvars
+*.auto.tfvars.json
+
 # Terraform crash logs
 crash.log
 crash.*.log
 
 # macOS
 .DS_Store
+
+# Terraform plan files
 environments/dev/tfplan
 
 # Installer packages

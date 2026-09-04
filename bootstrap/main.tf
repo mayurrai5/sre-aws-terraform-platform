@@ -152,7 +152,10 @@ resource "aws_iam_role_policy" "github_actions_terraform" {
 
     Statement = [
 
+      # ----------------------------------------------
       # Terraform remote state bucket access
+      # ----------------------------------------------
+
       {
         Sid    = "TerraformStateBucket"
         Effect = "Allow"
@@ -165,7 +168,11 @@ resource "aws_iam_role_policy" "github_actions_terraform" {
         Resource = aws_s3_bucket.terraform_state.arn
       },
 
+      # ----------------------------------------------
       # Terraform remote state object access
+      # Includes Terraform S3 state locking
+      # ----------------------------------------------
+
       {
         Sid    = "TerraformStateObjects"
         Effect = "Allow"
@@ -179,7 +186,10 @@ resource "aws_iam_role_policy" "github_actions_terraform" {
         Resource = "${aws_s3_bucket.terraform_state.arn}/*"
       },
 
+      # ----------------------------------------------
       # KMS permissions for encrypted Terraform state
+      # ----------------------------------------------
+
       {
         Sid    = "TerraformStateKMS"
         Effect = "Allow"
@@ -194,15 +204,102 @@ resource "aws_iam_role_policy" "github_actions_terraform" {
         Resource = aws_kms_key.terraform_state.arn
       },
 
-      # Read-only AWS access required for terraform plan
+      # ----------------------------------------------
+      # EC2 / VPC / Networking
+      # ----------------------------------------------
+
       {
-        Sid    = "TerraformPlanReadAccess"
+        Sid    = "TerraformEC2Networking"
         Effect = "Allow"
 
         Action = [
           "ec2:Describe*",
+
+          "ec2:CreateVpc",
+          "ec2:DeleteVpc",
+          "ec2:ModifyVpcAttribute",
+
+          "ec2:CreateSubnet",
+          "ec2:DeleteSubnet",
+          "ec2:ModifySubnetAttribute",
+
+          "ec2:CreateRouteTable",
+          "ec2:DeleteRouteTable",
+          "ec2:AssociateRouteTable",
+          "ec2:DisassociateRouteTable",
+
+          "ec2:CreateRoute",
+          "ec2:ReplaceRoute",
+          "ec2:DeleteRoute",
+
+          "ec2:CreateInternetGateway",
+          "ec2:DeleteInternetGateway",
+          "ec2:AttachInternetGateway",
+          "ec2:DetachInternetGateway",
+
+          "ec2:AllocateAddress",
+          "ec2:ReleaseAddress",
+
+          "ec2:CreateNatGateway",
+          "ec2:DeleteNatGateway",
+
+          "ec2:CreateSecurityGroup",
+          "ec2:DeleteSecurityGroup",
+          "ec2:AuthorizeSecurityGroupIngress",
+          "ec2:AuthorizeSecurityGroupEgress",
+          "ec2:RevokeSecurityGroupIngress",
+          "ec2:RevokeSecurityGroupEgress",
+
+          "ec2:RunInstances",
+          "ec2:TerminateInstances",
+
+          "ec2:CreateTags",
+          "ec2:DeleteTags"
+        ]
+
+        Resource = "*"
+      },
+
+      # ----------------------------------------------
+      # IAM resources managed by Terraform
+      # ----------------------------------------------
+
+      {
+        Sid    = "TerraformIAM"
+        Effect = "Allow"
+
+        Action = [
           "iam:Get*",
           "iam:List*",
+
+          "iam:CreateRole",
+          "iam:DeleteRole",
+          "iam:UpdateAssumeRolePolicy",
+
+          "iam:AttachRolePolicy",
+          "iam:DetachRolePolicy",
+
+          "iam:CreateInstanceProfile",
+          "iam:DeleteInstanceProfile",
+
+          "iam:AddRoleToInstanceProfile",
+          "iam:RemoveRoleFromInstanceProfile",
+
+          "iam:PassRole"
+        ]
+
+        Resource = "*"
+      },
+
+      # ----------------------------------------------
+      # Identity
+      # ----------------------------------------------
+
+      {
+        Sid    = "TerraformSTS"
+        Effect = "Allow"
+
+        Action = [
           "sts:GetCallerIdentity"
         ]
 

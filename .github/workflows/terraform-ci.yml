@@ -11,10 +11,11 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   terraform:
-    name: Terraform Validation
+    name: Terraform Validation and Plan
     runs-on: ubuntu-latest
 
     defaults:
@@ -29,12 +30,35 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.12.0"
+      - name: Debug OIDC claims
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const token = await core.getIDToken("sts.amazonaws.com")
+            const payload = JSON.parse(
+              Buffer.from(token.split(".")[1], "base64url").toString()
+            )
+
+            console.log("issuer:", payload.iss)
+            console.log("audience:", payload.aud)
+            console.log("subject:", payload.sub)
+            console.log("repository:", payload.repository)
+            console.log("ref:", payload.ref)
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::015747469534:role/sre-github-actions-terraform-role
+          aws-region: ap-south-1
 
       - name: Terraform Format Check
-        run:  terraform fmt -check -recursive ../..
+        run: terraform fmt -check -recursive ../..
 
       - name: Terraform Initialize
-        run: terraform init -backend=false
+        run: terraform init
 
       - name: Terraform Validate
         run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan -no-color -input=false -var-file=dev.tfvars

@@ -170,7 +170,6 @@ resource "aws_iam_role_policy" "github_actions_terraform" {
 
       # ----------------------------------------------
       # Terraform remote state object access
-      # Includes Terraform S3 state locking
       # ----------------------------------------------
 
       {
@@ -238,6 +237,8 @@ resource "aws_iam_role_policy" "github_actions_terraform" {
           "ec2:DetachInternetGateway",
 
           "ec2:AllocateAddress",
+          "ec2:AssociateAddress",
+          "ec2:DisassociateAddress",
           "ec2:ReleaseAddress",
 
           "ec2:CreateNatGateway",
